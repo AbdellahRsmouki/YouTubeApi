@@ -1,57 +1,54 @@
 package com.example.youtubecontroler;
+import android.os.Bundle;
+
+import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+public class MainActivity extends AppCompatActivity {
 
-import com.google.android.youtube.player.YouTubeBaseActivity;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends YouTubeBaseActivity {
-
-    Button playBtn;
-    YouTubePlayerView youTubePlayerView;
-    YouTubePlayer.OnInitializedListener onInitializedListener;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private TabLayout tabLayout = null;
+    private ViewPager viewPager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i(TAG, "onCreate: ");
-        playBtn = findViewById(R.id.play_btn);
-        youTubePlayerView = findViewById(R.id.video);
 
-        onInitializedListener = new YouTubePlayer.OnInitializedListener() {
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+
+        //setting the tabs title
+        tabLayout.addTab(tabLayout.newTab().setText("Channel"));
+        tabLayout.addTab(tabLayout.newTab().setText("PlayList"));
+        tabLayout.addTab(tabLayout.newTab().setText("Live"));
+
+        //setup the view pager
+        final PagerAdapter adapter = new com.example.youtubecontroler.adapters.PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                Log.i(TAG, "onInitializationSuccess: ");
-                List<String> vedioList = new ArrayList<>();
-                vedioList.add("VriiDn676PQ");
-                vedioList.add("W4hTJybfU7s");
-                youTubePlayer.loadVideos(vedioList);
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                Log.i(TAG, "onInitializationFailure: ");
+            public void onTabUnselected(TabLayout.Tab tab) {
+
             }
-        };
-        playBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: ");
-                youTubePlayerView.initialize(YouTubeConfig.getApiKey(),onInitializedListener);
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
+
+
+
 
     }
 }
